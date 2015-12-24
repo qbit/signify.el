@@ -27,7 +27,6 @@
 ;;; Code:
 
 (defvar signify-sec-key "$HOME/signify/aaron@bolddaemon.com.sec")
-
 (defvar signify-pub-key "$HOME/signify/aaron@bolddaemon.com.pub")
 
 ;; (defgroup signify nil
@@ -71,10 +70,9 @@
    (current-buffer)))
 
 ;;; verifies against a public key
-(defun verify (msg key)
-  "Verify MSG with KEY."
-  (interactive)
-  )
+(defun verify (msg)
+  "Verify a MSG, assumes sig is embedded in MSG (created with -e)."
+  (interactive))
 
 (provide 'signify)
 
