@@ -44,21 +44,21 @@
 ;;   :type 'string
 ;;   :group 'signify)
 
-(defun sign (str)
-  "Sign STR with SIGNIFY-SEC-KEY."
-  )
+(defun sign-cmd ()
+  "Return the command used to sign a message."
+  (concat "signify "
+	  (mapconcat 'shell-quote-argument '("-S" "-e" "-s") " ")
+	  " "
+	  signify-sec-key
+	  " "
+	  (mapconcat 'shell-quote-argument '("-m" "-" "-x" "-") " ")))
 
 (defun sign-region (&optional b e)
   "Sign region from B to E, adding message signature to start of region."
   (interactive "r")
   (shell-command-on-region
    b e
-   (concat "signify "
-	   (mapconcat 'shell-quote-argument '("-S" "-e" "-s") " ")
-	   " "
-	   signify-sec-key
-	   " "
-	   (mapconcat 'shell-quote-argument '("-m" "-" "-x" "-") " "))
+   (sign-cmd)
    (current-buffer) t)
   (comment-region (mark) (point) 0))
 
@@ -67,12 +67,7 @@
   (interactive)
   (shell-command-on-region
    (point-min) (point-max)
-   (concat "signify "
-	   (mapconcat 'shell-quote-argument '("-S" "-e" "-s") " ")
-	   " "
-	   signify-sec-key
-	   " "
-	   (mapconcat 'shell-quote-argument '("-m" "-" "-x" "-") " "))
+   (sign-cmd)
    (current-buffer)))
 
 ;;; verifies against a public key
