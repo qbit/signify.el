@@ -43,12 +43,19 @@
 ;;   :type 'string
 ;;   :group 'signify)
 
-(defun sign-cmd ()
-  "Return the command used to sign a message."
+(defvar sign-cmd
   (concat "signify "
 	  (mapconcat 'shell-quote-argument '("-S" "-e" "-s") " ")
 	  " "
 	  signify-sec-key
+	  " "
+	  (mapconcat 'shell-quote-argument '("-m" "-" "-x" "-") " ")))
+
+(defvar verify-cmd
+  (concat "signify "
+	  (mapconcat 'shell-quote-argument '("-V" "-e" "-p") " ")
+	  " "
+	  signify-pub-key
 	  " "
 	  (mapconcat 'shell-quote-argument '("-m" "-" "-x" "-") " ")))
 
@@ -57,7 +64,7 @@
   (interactive "r")
   (shell-command-on-region
    b e
-   (sign-cmd)
+   sign-cmd
    (current-buffer) t)
   (comment-region (mark) (point) 0))
 
@@ -66,13 +73,20 @@
   (interactive)
   (shell-command-on-region
    (point-min) (point-max)
-   (sign-cmd)
+   sign-cmd
    (current-buffer)))
 
-;;; verifies against a public key
+(defun verify-buffer ()
+  "Verify a buffer."
+  (interactive)
+  (shell-command-on-region
+   (point-min) (point-max)
+   verify-cmd))
+
 (defun verify (msg)
   "Verify a MSG, assumes sig is embedded in MSG (created with -e)."
-  (interactive))
+  (interactive)
+  )
 
 (provide 'signify)
 
