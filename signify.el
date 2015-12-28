@@ -29,6 +29,8 @@
 (defvar signify-sec-key "$HOME/signify/aaron@bolddaemon.com.sec")
 (defvar signify-pub-key "$HOME/signify/aaron@bolddaemon.com.pub")
 
+(defvar signify-buffer (generate-new-buffer "*signify*"))
+
 ;; (defgroup signify nil
 ;;   "Quick manipulation of signify key paths."
 ;;   :group 'applications)
@@ -59,6 +61,14 @@
 	  " "
 	  (mapconcat 'shell-quote-argument '("-m" "-" "-x" "-") " ")))
 
+(defvar verify-cmd-quiet
+  (concat "signify "
+	  (mapconcat 'shell-quote-argument '("-q" "-V" "-e" "-p") " ")
+	  " "
+	  signify-pub-key
+	  " "
+	  (mapconcat 'shell-quote-argument '("-m" "-" "-x" "-") " ")))
+
 (defun sign-region (&optional b e)
   "Sign region from B to E, adding message signature to start of region."
   (interactive "r")
@@ -74,19 +84,34 @@
   (shell-command-on-region
    (point-min) (point-max)
    sign-cmd
-   (current-buffer)))
+   (current-buffer) t))
 
 (defun verify-buffer ()
   "Verify a buffer."
   (interactive)
   (shell-command-on-region
    (point-min) (point-max)
-   verify-cmd))
+   verify-cmd
+   signify-buffer)
+  (get-signify-result))
+
+(defun verify-buffer-replace ()
+  "Verify a buffer, replacing the current with the result of verification."
+  (interactive)
+  (shell-command-on-region
+   (point-min) (point-max)
+   verify-cmd-quiet
+   (current-buffer) t))
+
+(defun get-signify-result ()
+  "Gets the first line from the *signify* buffer and prints it as a result."
+  (with-current-buffer "*signify*"
+    (let ((split (split-string (buffer-string) "[\t\n]")))
+      (message (nth 0 split)))))
 
 (defun verify (msg)
   "Verify a MSG, assumes sig is embedded in MSG (created with -e)."
-  (interactive)
-  )
+  (interactive))
 
 (provide 'signify)
 
