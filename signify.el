@@ -45,7 +45,7 @@
 ;;   :type 'string
 ;;   :group 'signify)
 
-(defvar sign-cmd
+(defvar signify-sign-cmd
   (concat "signify "
 	  (mapconcat 'shell-quote-argument '("-S" "-e" "-s") " ")
 	  " "
@@ -53,7 +53,7 @@
 	  " "
 	  (mapconcat 'shell-quote-argument '("-m" "-" "-x" "-") " ")))
 
-(defvar verify-cmd
+(defvar signify-verify-cmd
   (concat "signify "
 	  (mapconcat 'shell-quote-argument '("-V" "-e" "-p") " ")
 	  " "
@@ -61,7 +61,7 @@
 	  " "
 	  (mapconcat 'shell-quote-argument '("-m" "-" "-x" "-") " ")))
 
-(defvar verify-cmd-quiet
+(defvar signify-verify-cmd-quiet
   (concat "signify "
 	  (mapconcat 'shell-quote-argument '("-q" "-V" "-e" "-p") " ")
 	  " "
@@ -69,7 +69,7 @@
 	  " "
 	  (mapconcat 'shell-quote-argument '("-m" "-" "-x" "-") " ")))
 
-(defun sign-region (&optional b e)
+(defun signify-sign-region (&optional b e)
   "Sign region from B to E, adding message signature to start of region."
   (interactive "r")
   (shell-command-on-region
@@ -78,7 +78,7 @@
    (current-buffer) t)
   (comment-region (mark) (point) 0))
 
-(defun sign-buffer ()
+(defun signify-sign-buffer ()
   "Sign an entire buffer, adding sig to start of buffer."
   (interactive)
   (shell-command-on-region
@@ -86,7 +86,7 @@
    sign-cmd
    (current-buffer) t))
 
-(defun verify-buffer ()
+(defun signify-verify-buffer ()
   "Verify a buffer."
   (interactive)
   (shell-command-on-region
@@ -95,7 +95,7 @@
    signify-buffer)
   (get-signify-result))
 
-(defun verify-buffer-replace ()
+(defun signify-verify-buffer-replace ()
   "Verify a buffer, replacing the current with the result of verification."
   (interactive)
   (shell-command-on-region
@@ -103,13 +103,13 @@
    verify-cmd-quiet
    (current-buffer) t))
 
-(defun get-signify-result ()
+(defun signify-get-signify-result ()
   "Gets the first line from the *signify* buffer and prints it as a result."
   (with-current-buffer "*signify*"
     (let ((split (split-string (buffer-string) "[\t\n]")))
       (message (nth 0 split)))))
 
-(defun verify (msg)
+(defun signify-verify (msg)
   "Verify a MSG, assumes sig is embedded in MSG (created with -e)."
   (interactive))
 
